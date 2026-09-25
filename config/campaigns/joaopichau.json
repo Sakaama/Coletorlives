@@ -1,0 +1,63 @@
+{
+  "verified_channel_ids": [],
+  "max_date": null,
+  "official_profile": null,
+  "excluded_terms": [],
+  "prohibitions": [
+    "Não usar plataformas de IA para gerar cortes.",
+    "Não usar collab entre contas.",
+    "Não repetir vídeos na mesma plataforma sem mudanças significativas.",
+    "Não baixar cortes de outros participantes e repostar.",
+    "Não comprar engajamento.",
+    "Não inflar visualizações artificialmente.",
+    "Não publicar volume excessivo para inflar views.",
+    "Não divulgar apostas/jogos de azar sem autorização.",
+    "Não inserir links promocionais de terceiros não autorizados."
+  ],
+  "ai_policy": "Regra informada pelo operador: proibido usar plataformas de IA para gerar cortes. Preservada como informação de compliance, sem interpretação jurídica ou certificação de que revisão/edição humana dispensem a regra.",
+  "operational_requirements": [
+    "Entrar no grupo oficial de WhatsApp (link não fornecido; ação manual)."
+  ],
+  "id": "joaopichau",
+  "name": "João Pichau",
+  "streamer": "João Pichau",
+  "channel_aliases": [],
+  "allowed_sources": [
+    "YouTube",
+    "Kick",
+    "Twitch"
+  ],
+  "source_channels": [
+    "Lives da Pichau",
+    "Lives de canais em que João Pichau tenha participação ativa (confirmar origem)"
+  ],
+  "original_lives_only": true,
+  "original_live_review": "Conferir se é live da Pichau ou de canal com participação ativa do João Pichau; todo corte deve conter participação ativa dele.",
+  "min_date": "2026-09-01",
+  "hashtags": [
+    "#joaopichau"
+  ],
+  "required_texts": [
+    "Até 09/10/2026, fixar o comentário: Evento Pichau Arena, o maior evento gamer do Sul do Brasil, de 10 a 12 de outubro em Joinville - SC"
+  ],
+  "required_visuals": [],
+  "publication_platforms": [
+    "Instagram",
+    "TikTok",
+    "YouTube"
+  ],
+  "publication_all_required": false,
+  "pinned_comment": {
+    "text": "Evento Pichau Arena, o maior evento gamer do Sul do Brasil, de 10 a 12 de outubro em Joinville - SC",
+    "required_until": "2026-10-09"
+  },
+  "notes": "Usar exclusivamente trechos de lives da Pichau ou de canais com participação ativa do João Pichau. Todo corte deve conter participação ativa dele. Conteúdo desde 01/09/2026. Entrar no grupo oficial de WhatsApp (ação manual, link não fornecido). Fontes/plataformas técnicas não comprovam autorização; confirmar canal e participação no Preview. URLs e IDs oficiais ainda não fornecidos. Comentário fixado obrigatório até 09/10/2026; conferência manual da vigência.",
+  "vertical": {
+    "camera_height": 640,
+    "band_height": 120,
+    "text": "",
+    "text_x": 35,
+    "text_y": 680,
+    "asset": null
+  }
+}

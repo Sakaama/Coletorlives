@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TUTUCO Gold Set v1",
+  "description": "Anotações humanas deliberadas. Segundos absolutos desde o início da VOD. IDs únicos e end > start são verificados pelo benchmark.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "gold_cuts"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "gold_cuts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gold_id", "vod_id", "campaign_id", "creator", "expected_start", "expected_end", "would_clip"],
+        "properties": {
+          "gold_id": {"type": "string", "pattern": "\\S"},
+          "vod_id": {"type": "string", "pattern": "\\S"},
+          "campaign_id": {"type": "string", "pattern": "\\S"},
+          "creator": {"type": "string", "pattern": "\\S"},
+          "expected_start": {"type": "number", "minimum": 0},
+          "expected_end": {"type": "number", "exclusiveMinimum": 0},
+          "would_clip": {"type": "boolean", "const": true, "description": "EU CORTARIA ESTE TRECHO."},
+          "content_type": {"type": "string", "pattern": "\\S"},
+          "priority": {"type": "string", "pattern": "\\S"},
+          "notes": {"type": "string", "pattern": "\\S"},
+          "metadata": {"type": "object"}
+        }
+      }
+    }
+  }
+}

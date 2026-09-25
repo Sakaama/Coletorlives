@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  tutuco-clip-miner:
+    build: .
+    container_name: tutuco-clip-miner
+    restart: unless-stopped
+    ports:
+      - "8765:8765"
+    environment:
+      - ALLOW_REMOTE=true
+      - AUTH_REQUIRED=${AUTH_REQUIRED:-false}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - EDITOR_PASSWORD=${EDITOR_PASSWORD:-}
+      - VIEWER_PASSWORD=${VIEWER_PASSWORD:-}
+      - SECRET_KEY=${SECRET_KEY:-}
+      - RADAR_WEBHOOK_SECRET=${RADAR_WEBHOOK_SECRET:-}
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT:-}
+      - BUCKET_NAME=${BUCKET_NAME:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config

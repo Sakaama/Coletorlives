@@ -1,0 +1,22 @@
+{
+  "requested_start": 12772.0,
+  "requested_end": 12803.2,
+  "obtained_duration": 31.2,
+  "obtained_start": null,
+  "obtained_end": null,
+  "seek": "yt-dlp force-keyframes-at-cuts",
+  "note": "Origem temporal calculada pelo seek da ferramenta; início absoluto não medido independentemente.",
+  "media": {
+    "duration": 31.2,
+    "width": 1920,
+    "height": 1080,
+    "has_audio": true,
+    "video_codec": "h264",
+    "fps": 60.0
+  },
+  "quality": "1080p60",
+  "candidate_id": "e18e605f6ec64e8d",
+  "vod_id": "BRKK_2026-09-20_004f237d92",
+  "campaign": "brkk",
+  "editorial_package": {}
+}

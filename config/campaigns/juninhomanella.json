@@ -1,0 +1,57 @@
+{
+  "verified_channel_ids": [],
+  "max_date": null,
+  "official_profile": null,
+  "excluded_terms": [],
+  "prohibitions": [
+    "Não usar plataformas de IA para gerar cortes.",
+    "Não usar collab entre contas.",
+    "Não repetir vídeos na mesma plataforma sem mudanças significativas.",
+    "Não baixar cortes de outros participantes e repostar.",
+    "Não comprar engajamento.",
+    "Não inflar visualizações artificialmente.",
+    "Não publicar volume excessivo para inflar views.",
+    "Não divulgar apostas/jogos de azar sem autorização.",
+    "Não inserir links promocionais de terceiros não autorizados."
+  ],
+  "ai_policy": "Regra informada pelo operador: proibido usar plataformas de IA para gerar cortes. Preservada como informação de compliance, sem interpretação jurídica ou certificação de que revisão/edição humana dispensem a regra.",
+  "operational_requirements": [
+    "Entrar no grupo oficial de WhatsApp (link não fornecido; ação manual)."
+  ],
+  "id": "juninhomanella",
+  "name": "Juninho Manella",
+  "streamer": "Juninho Manella",
+  "channel_aliases": [
+    "juninhomanella"
+  ],
+  "allowed_sources": [
+    "YouTube",
+    "Kick"
+  ],
+  "source_channels": [
+    "YouTube oficial do Juninho",
+    "Instagram do Juninho",
+    "TikTok do Juninho",
+    "Transmissões da Kings League",
+    "Lives do Juninho"
+  ],
+  "min_date": null,
+  "hashtags": [
+    "#juninhomanella"
+  ],
+  "required_texts": [
+    "Marcar o perfil oficial do Juninho Manella em todos os cortes (confirmar o @, não fornecido)"
+  ],
+  "required_visuals": [
+    "Divulgar kick.com/juninhomanella NO PRÓPRIO CORTE; apenas legenda, título ou descrição não atende"
+  ],
+  "notes": "Todo corte deve ter foco no Juninho Manella. Entrar no grupo oficial de WhatsApp (ação manual, link não fornecido). Período não informado: confirmar manualmente, sem presumir data mínima. Fontes conhecidas registradas; URL direta de Instagram/TikTok não é suportada pelo importador atual: usar arquivo local autorizado. Conferir origem, foco e perfil oficial no Preview. Lives e conteúdo não-live das fontes conhecidas podem exigir revisão humana; não há regra de somente lives para esta campanha.",
+  "vertical": {
+    "camera_height": 640,
+    "band_height": 120,
+    "text": "kick.com/juninhomanella",
+    "text_x": 35,
+    "text_y": 680,
+    "asset": null
+  }
+}

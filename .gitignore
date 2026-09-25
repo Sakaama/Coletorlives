@@ -1,0 +1,63 @@
+# =============================================================================
+# TUTUCO CLIP MINER — .gitignore
+# =============================================================================
+
+# Environments & Virtualenvs
+.venv/
+env/
+venv/
+ENV/
+
+# Python Caches & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+test-results/
+
+# Secrets & Environment Configurations
+.env
+.env.*
+!.env.example
+credentials/
+*.pem
+*.key
+*service_account*.json
+*gcp-key*.json
+
+# Data & SQLite Databases (Product State & Processing State)
+data/
+*.sqlite3
+*.sqlite
+*.db
+.instance.lock
+
+# Logs & Diagnostics
+logs/
+*.log
+
+# Media & Heavy Models
+models/
+*.mp4
+*.m4a
+*.ts
+*.m3u8
+*.aac
+*.wav
+*.mp3
+
+# Bundles & Compressed Archives
+*.zip
+*.tar.gz
+*.7z
+backups/
+
+# Node / JS caches
+node_modules/
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

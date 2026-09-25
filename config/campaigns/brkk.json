@@ -1,0 +1,17 @@
+{
+  "id": "brkk",
+  "name": "BRKK",
+  "streamer": "BRKK",
+  "channel_aliases": ["brkk"],
+  "verified_channel_ids": [],
+  "allowed_sources": ["Kick", "YouTube"],
+  "min_date": "2026-09-15",
+  "max_date": null,
+  "hashtags": ["#brkk"],
+  "official_profile": null,
+  "required_texts": ["kick.com/brkk", "Marcar o perfil oficial (confirmar o @ antes de publicar)"],
+  "required_visuals": ["Divulgar kick.com/brkk dentro do corte"],
+  "excluded_terms": ["cinefy"],
+  "notes": "Somente lives do BRKK na Kick e YouTube, a partir de 15/09/2026. Não usar lives do Cinefy. Conferir origem e data da live, não apenas a data de upload.",
+  "vertical": {"camera_height": 640, "band_height": 120, "text": "kick.com/brkk", "text_x": 35, "text_y": 680, "asset": null}
+}

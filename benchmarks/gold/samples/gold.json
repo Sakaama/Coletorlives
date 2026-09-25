@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "gold_cuts": [
+    {
+      "gold_id": "synthetic-human-001",
+      "vod_id": "synthetic-vod",
+      "campaign_id": "synthetic-campaign",
+      "creator": "Exemplo sintético",
+      "expected_start": 70,
+      "expected_end": 115,
+      "would_clip": true,
+      "notes": "Exemplo de aceite 01:10–01:55. Não é avaliação humana de uma VOD real."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "id": "gabepeixe",
+  "name": "GabePeixe",
+  "streamer": "GabePeixe",
+  "channel_aliases": [
+    "gabepeixe"
+  ],
+  "verified_channel_ids": [],
+  "allowed_sources": [
+    "Kick"
+  ],
+  "source_channels": [
+    "https://kick.com/gabepeixe"
+  ],
+  "min_date": "2026-09-01",
+  "max_date": "2026-10-22",
+  "period_start": "2026-09-22T14:00",
+  "period_end": "2026-10-22T23:59",
+  "ranking_date": "2026-10-24T12:00",
+  "hashtags": [
+    "#gabepeixe"
+  ],
+  "official_profile": "GabePeixe (confirmar @ oficial antes de publicar)",
+  "required_texts": [
+    "Marcar o perfil oficial do GabePeixe (confirmar o @ antes de publicar)"
+  ],
+  "required_visuals": [
+    "LOWER (gabepeixe) abaixo do rosto"
+  ],
+  "excluded_terms": [],
+  "excluded_content_types": [
+    "reel",
+    "tiktok",
+    "short",
+    "edited_video",
+    "third_party_clip"
+  ],
+  "prohibitions": [
+    "Não utilizar Reels, TikToks ou Shorts publicados pelo GabePeixe, nem vídeos já editados como fonte de VOD.",
+    "Não utilizar vídeos/cortes de outros participantes nem de outras contas de cortes.",
+    "Não comprar engajamento nem utilizar artifícios para aumentar visualizações artificialmente.",
+    "Não publicar volume excessivo de cortes visando visualizações vazias.",
+    "Não usar collab entre participantes da campanha.",
+    "Não usar plataformas de IA para gerar cortes 100% automatizados sem edição ou curadoria humana.",
+    "Não divulgar marcas ou apostas sem autorização oficial."
+  ],
+  "ai_policy": "Regra confirmada do campeonato: proibido o uso exclusivamente automatizado de plataformas de IA para gerar cortes. O TUTUCO CLIP MINER apoia exclusivamente a decupagem, análise técnica e pré-seleção; a curadoria, refinamento de intervalo, edição criativa com inclusão do LOWER obrigatório e postagem são 100% manuais e humanas.",
+  "operational_requirements": [
+    "LOWER OBRIGATÓRIO: banner/lower do GabePeixe posicionado abaixo do rosto no corte final.",
+    "Hashtag obrigatória: #gabepeixe em todas as publicações.",
+    "Marcar o perfil oficial do GabePeixe na plataforma onde for publicado (confirmar @ antes de postar).",
+    "Conteúdo elegível: exclusivamente lives realizadas a partir de 01/09/2026 na Kick.",
+    "Janela de publicação válida do campeonato: 22/09/2026 às 14:00 até 22/10/2026 às 23:59 (ranking final em 24/10/2026 às 12:00)."
+  ],
+  "publication_platforms": [
+    "TikTok",
+    "Instagram",
+    "YouTube Shorts",
+    "Kwai"
+  ],
+  "publication_all_required": false,
+  "notes": "Campeonato GabePeixe (22/09/2026 14:00 até 22/10/2026 23:59, ranking final 24/10/2026 12:00). Fonte operacional principal: lives do canal Kick (kick.com/gabepeixe) a partir de 01/09/2026. Obrigatório no corte final: LOWER oficial posicionado abaixo do rosto do Gabe, hashtag #gabepeixe e marcação do perfil oficial. Proibido: compra/manipulação de engajamento, collab entre participantes, repost de cortes de outros participantes, spam de volume para views vazias, cortes 100% automatizados por IA sem edição humana. O placeholder vertical na interface não substitui a aplicação do lower oficial pelo editor.",
+  "vertical": {
+    "camera_height": 640,
+    "band_height": 120,
+    "text": "LOWER (gabepeixe) - PLACEHOLDER",
+    "text_x": 35,
+    "text_y": 680,
+    "asset": null
+  }
+}

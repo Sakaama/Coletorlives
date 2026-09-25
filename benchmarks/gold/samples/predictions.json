@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "predictions": [
+    {
+      "prediction_id": "synthetic-miner-001",
+      "vod_id": "synthetic-vod",
+      "campaign_id": "synthetic-campaign",
+      "start": 72,
+      "end": 113,
+      "metadata": {"origin": "synthetic-acceptance-example"}
+    }
+  ]
+}

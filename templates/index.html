@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="miner-token" content="{{ token }}">
+  <title>TUTUCO CLIP MINER — Clipping Intelligence</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/product.css">
+  <script src="/static/app.js" defer></script>
+  <script src="/static/remote.js" defer></script>
+  <script src="/static/product.js" defer></script>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- Modern App Shell Sidebar -->
+  <aside class="app-sidebar sidebar">
+    <div class="sidebar-header">
+      <a class="brand-badge brand" href="/" onclick="event.preventDefault(); productNavigate('dashboard');">
+        <div class="icon-box brand-icon">T</div>
+        <div class="text-group">
+          <span class="brand-name">TUTUCO<small style="display:none;">CLIP MINER</small></span>
+          <span class="brand-sub">CLIP MINER</span>
+        </div>
+      </a>
+      <div class="workspace-status local" id="sidebar-cloud-status">
+        <i class="status-dot"></i>
+        <span id="sidebar-cloud-text">LOCAL WORKSPACE</span>
+      </div>
+    </div>
+
+    <!-- Navigation Groups -->
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-group-title">Overview</div>
+        <button type="button" class="nav-item active" data-view="dashboard">
+          <span class="nav-label"><span class="nav-icon">📊</span> Dashboard</span>
+        </button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Operação</div>
+        <button type="button" class="nav-item" data-view="campaigns">
+          <span class="nav-label"><span class="nav-icon">🎯</span> Campanhas</span>
+        </button>
+        <button type="button" class="nav-item" data-view="creators">
+          <span class="nav-label"><span class="nav-icon">👤</span> Criadores</span>
+        </button>
+        <button type="button" class="nav-item" data-view="sources">
+          <span class="nav-label"><span class="nav-icon">📹</span> Lives / VODs</span>
+        </button>
+        <button type="button" class="nav-item" data-view="inbox">
+          <span class="nav-label"><span class="nav-icon">✂️</span> Cortes</span>
+          <span class="nav-pill" id="nav-inbox-counter">307</span>
+        </button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Inteligência</div>
+        <button type="button" class="nav-item" data-view="dna">
+          <span class="nav-label"><span class="nav-icon">🧬</span> Perfil de Cortes</span>
+        </button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Roadmap</div>
+        <button type="button" class="nav-item" data-view="publisher">
+          <span class="nav-label"><span class="nav-icon">🚀</span> Publisher</span>
+          <span class="nav-pill upcoming">Em breve</span>
+        </button>
+        <button type="button" class="nav-item" data-view="analytics">
+          <span class="nav-label"><span class="nav-icon">📈</span> Analytics</span>
+          <span class="nav-pill upcoming">Em breve</span>
+        </button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Sistema</div>
+        <button type="button" class="nav-item" data-view="system">
+          <span class="nav-label"><span class="nav-icon">⚙️</span> Diagnóstico</span>
+        </button>
+      </div>
+
+      <!-- Quick Action / Import -->
+      <div style="padding: 10px 4px 6px;">
+        <button type="button" id="new-vod" class="primary wide">＋ Importar VOD</button>
+        <button type="button" id="remote-open" style="display:none;">Campanhas / Remote</button>
+      </div>
+
+      <!-- Library (Preserved for tests & local VOD picking) -->
+      <div class="side-label" style="margin-top:14px;">BIBLIOTECA <span id="library-count">0</span></div>
+      <div id="library" style="max-height:160px; overflow-y:auto;"></div>
+    </nav>
+
+    <div class="sidebar-footer side-footer">
+      <div class="storage-pill">
+        <span>SQLite Local:</span>
+        <strong style="color:var(--text-primary);">data/history</strong>
+      </div>
+      <button type="button" id="diagnostics" class="quiet" onclick="productNavigate('system')">Diagnóstico do ambiente</button>
+      <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">Seu olhar decide o corte.</div>
+    </div>
+  </aside>
+
+  <!-- Main Content Shell -->
+  <main class="app-main">
+
+    <!-- Topbar -->
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <div class="breadcrumb-trail">
+          <span style="opacity:0.6;">WORKSPACE</span>
+          <span>/</span>
+          <b id="breadcrumb" style="display:none;">VISÃO GERAL</b>
+          <b id="product-breadcrumb" class="active-crumb">OVERVIEW / DASHBOARD</b>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div id="topbar-processing-pill" class="processing-badge" hidden>
+          <span class="pulse-dot"></span>
+          <span>Processando</span>
+        </div>
+        <div id="cloud-mode-pill" class="badge badge-neutral" style="font-size:11px; padding:4px 8px;" title="Status de Armazenamento">
+          ☁️ <span id="cloud-mode-text">Local</span>
+        </div>
+        <div id="user-role-pill" class="badge badge-accent" style="font-size:11px; padding:4px 8px;" title="Usuário Ativo">
+          👤 <span id="user-role-text">Admin</span>
+        </div>
+        <button type="button" class="btn-quiet" onclick="productNavigate('inbox')">📥 Inbox</button>
+        <button type="button" class="primary" onclick="productNavigate('campaigns')">Operar Backlog →</button>
+      </div>
+    </header>
+
+    <!-- ==================== VIEW 1: DASHBOARD ==================== -->
+    <section id="view-dashboard" class="page-view">
+      <div class="page-header">
+        <div>
+          <h1>Dashboard de Operação</h1>
+          <p>Visão executiva em tempo real de campanhas, criadores, VODs e cortes pendentes de curadoria.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn-quiet" onclick="loadDashboardView()">↻ Atualizar</button>
+          <button type="button" class="primary" onclick="productNavigate('inbox')">Revisar Cortes no Inbox →</button>
+        </div>
+      </div>
+
+      <!-- Active Processing Card / Hero -->
+      <div id="dash-active-processing-card"></div>
+
+      <!-- KPI Metrics Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card" onclick="productNavigate('campaigns')" style="cursor:pointer;">
+          <div class="kpi-label">Campanhas Ativas <span>🎯</span></div>
+          <div class="kpi-value" id="kpi-active-campaigns">1</div>
+          <div class="kpi-subtext">GabePeixe · Kick Oficial</div>
+        </div>
+
+        <div class="kpi-card" onclick="productNavigate('creators')" style="cursor:pointer;">
+          <div class="kpi-label">Criadores Monitorados <span>👤</span></div>
+          <div class="kpi-value" id="kpi-creators">5</div>
+          <div class="kpi-subtext">Kick, YouTube & Twitch</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Horas de Live Analisadas <span>⏱</span></div>
+          <div class="kpi-value" id="kpi-hours-analyzed">76.9h</div>
+          <div class="kpi-subtext">Fast Scan + Faster Whisper</div>
+        </div>
+
+        <div class="kpi-card" onclick="productNavigate('sources')" style="cursor:pointer;">
+          <div class="kpi-label">VODs Processadas <span>📹</span></div>
+          <div class="kpi-value" id="kpi-vods-ratio">8 / 20</div>
+          <div class="kpi-subtext">7 concl. + 1 checkpoint</div>
+        </div>
+
+        <div class="kpi-card" onclick="productNavigate('inbox')" style="cursor:pointer; border-color: rgba(99, 102, 241, 0.4);">
+          <div class="kpi-label" style="color:var(--accent);">Aguardando Curadoria <span>📥</span></div>
+          <div class="kpi-value" id="kpi-inbox-waiting" style="color:var(--accent);">307</div>
+          <div class="kpi-subtext">73 na Shortlist Editorial</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Clips Aprovados <span>✓</span></div>
+          <div class="kpi-value" id="kpi-approved-clips" style="color:var(--success);">10</div>
+          <div class="kpi-subtext">Prontos para RAW / PREP</div>
+        </div>
+      </div>
+
+      <!-- Recent Activity & Quick Shortcuts -->
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+        <div class="card-section">
+          <div class="card-section-head">
+            <div>
+              <h2>Atividade Recente</h2>
+              <p>Histórico cronológico de descobertas, análises e decisões humanas de revisão.</p>
+            </div>
+            <button type="button" class="btn-quiet" style="font-size:11px;" onclick="loadDashboardView()">Atualizar</button>
+          </div>
+          <div id="dash-recent-activity-list"></div>
+        </div>
+
+        <div class="card-section">
+          <div class="card-section-head">
+            <h2>Ações Rápidas</h2>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button type="button" class="primary" style="justify-content:center; padding:12px;" onclick="productNavigate('inbox')">
+              📥 Abrir Clip Inbox (307)
+            </button>
+            <button type="button" style="justify-content:center; padding:12px;" onclick="productNavigate('campaigns')">
+              🎯 Operar Backlog GabePeixe
+            </button>
+            <button type="button" style="justify-content:center; padding:12px;" onclick="productNavigate('sources')">
+              📹 Ver Todas as 20 VODs
+            </button>
+            <button type="button" style="justify-content:center; padding:12px;" onclick="productNavigate('dna')">
+              🧬 Consultar Creator DNA
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: CAMPAIGNS ==================== -->
+    <section id="view-campaigns" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Campanhas Operacionais</h1>
+          <p>Gerencie o catálogo de VODs, regras editoriais e o Backlog Runner de cada criador.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn-quiet" onclick="loadCampaignsView()">↻ Atualizar</button>
+        </div>
+      </div>
+
+      <!-- Campaigns List Cards -->
+      <div id="campaigns-grid-container"></div>
+    </section>
+
+    <!-- ==================== VIEW 3: CREATORS ==================== -->
+    <section id="view-creators" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Criadores & Streamers</h1>
+          <p>Mapeamento de criadores de conteúdo monitorados, horas de live e desempenho de cortes.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn-quiet" onclick="loadCreatorsView()">↻ Atualizar</button>
+        </div>
+      </div>
+
+      <div id="creators-grid-container" class="creators-grid"></div>
+    </section>
+
+    <!-- ==================== VIEW 3B: CREATOR WORKSPACE ==================== -->
+    <section id="view-creator-workspace" class="page-view" hidden>
+      <!-- Creator Header -->
+      <div class="creator-workspace-header">
+        <div class="cw-profile-info">
+          <div id="cw-avatar" class="creator-avatar-box large">🎬</div>
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <h1 id="cw-name" style="margin:0; font-size:24px;">Nome do Criador</h1>
+              <span id="cw-platform-badge" class="badge badge-neutral">Kick</span>
+              <span id="cw-category-badge" class="badge badge-accent">Gaming</span>
+            </div>
+            <div id="cw-handle" style="color:var(--text-muted); font-size:13px; margin-top:4px;">@handle</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn-quiet" onclick="productNavigate('creators')">← Todos os Criadores</button>
+          <button type="button" class="primary" id="cw-action-operate" onclick="productSwitchWorkspaceTab('campaign')">Ver Campeonato →</button>
+        </div>
+      </div>
+
+      <!-- Sub-navigation Tabs -->
+      <div class="workspace-tabs-bar">
+        <div class="workspace-tabs">
+          <button type="button" class="cw-tab-btn active" id="cw-tab-overview" onclick="productSwitchWorkspaceTab('overview')">
+            📊 Visão Geral
+          </button>
+          <button type="button" class="cw-tab-btn" id="cw-tab-campaign" onclick="productSwitchWorkspaceTab('campaign')">
+            🎯 Campeonato
+          </button>
+          <button type="button" class="cw-tab-btn" id="cw-tab-lives" onclick="productSwitchWorkspaceTab('lives')">
+            📹 Lives (<span id="cw-lives-count">0</span>)
+          </button>
+          <button type="button" class="cw-tab-btn" id="cw-tab-cuts" onclick="productSwitchWorkspaceTab('cuts')">
+            ✂️ Cortes (<span id="cw-cuts-count">0</span>)
+          </button>
+          <button type="button" class="cw-tab-btn" id="cw-tab-profile" onclick="productSwitchWorkspaceTab('profile')">
+            🧬 Perfil de Cortes
+          </button>
+        </div>
+      </div>
+
+      <!-- Panes -->
+      <!-- 1. Visão Geral -->
+      <div id="cw-pane-overview" class="cw-tab-pane">
+        <!-- KPIs Row -->
+        <div class="kpi-grid" style="margin-bottom:20px;">
+          <div class="kpi-card" onclick="productSwitchWorkspaceTab('lives')" style="cursor:pointer;">
+            <div class="kpi-label">Lives Monitoradas <span>📹</span></div>
+            <div class="kpi-value" id="cw-kpi-vods">0</div>
+            <div class="kpi-subtext" id="cw-kpi-vods-sub">0 analisadas</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Horas de Live Analisadas <span>⏱</span></div>
+            <div class="kpi-value" id="cw-kpi-hours">0h</div>
+            <div class="kpi-subtext">Fast Scan + Faster Whisper</div>
+          </div>
+          <div class="kpi-card" onclick="productSwitchWorkspaceTab('cuts')" style="cursor:pointer; border-color: rgba(99, 102, 241, 0.4);">
+            <div class="kpi-label" style="color:var(--accent);">Cortes Encontrados <span>✂️</span></div>
+            <div class="kpi-value" id="cw-kpi-candidates" style="color:var(--accent);">0</div>
+            <div class="kpi-subtext" id="cw-kpi-candidates-sub">0 na shortlist</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Cortes Aprovados <span>✓</span></div>
+            <div class="kpi-value" id="cw-kpi-approved" style="color:var(--success);">0</div>
+            <div class="kpi-subtext">Prontos para publicação</div>
+          </div>
+        </div>
+
+        <!-- Highlight Championship Card -->
+        <div id="cw-overview-campaign-card" class="card-section" style="margin-bottom:20px;">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Recent Cuts Highlight -->
+        <div class="section-head" style="margin-top:24px; margin-bottom:14px;">
+          <div>
+            <h3>Cortes em Destaque (Shortlist)</h3>
+            <p>Melhores momentos com alto score editorial aguardando aprovação ou prontos para publicação.</p>
+          </div>
+          <button type="button" class="btn-quiet" onclick="productSwitchWorkspaceTab('cuts')">Ver todos os cortes →</button>
+        </div>
+        <div id="cw-overview-cuts-grid" class="inbox-cards-grid"></div>
+      </div>
+
+      <!-- 2. Campeonato -->
+      <div id="cw-pane-campaign" class="cw-tab-pane" hidden>
+        <div id="cw-campaign-container"></div>
+      </div>
+
+      <!-- 3. Lives -->
+      <div id="cw-pane-lives" class="cw-tab-pane" hidden>
+        <div class="filter-bar" style="margin-bottom:16px;">
+          <div class="filter-group">
+            <div class="search-input-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="cw-lives-search" placeholder="Buscar nas lives deste criador..." oninput="productFilterWorkspaceLives()">
+            </div>
+            <label>
+              Status:
+              <select id="cw-lives-status-filter" onchange="productFilterWorkspaceLives()">
+                <option value="">Todos os status</option>
+                <option value="Analisado">Analisado (Concluída)</option>
+                <option value="Processando">Processando</option>
+                <option value="Na Fila">Na Fila</option>
+                <option value="Erro">Erro</option>
+              </select>
+            </label>
+          </div>
+          <span class="badge badge-neutral"><span id="cw-lives-filtered-count">0</span> lives</span>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Título da Live</th>
+                <th>Duração</th>
+                <th>Plataforma</th>
+                <th>Status</th>
+                <th>Cortes</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="cw-lives-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. Cortes -->
+      <div id="cw-pane-cuts" class="cw-tab-pane" hidden>
+        <div class="filter-bar" style="margin-bottom:16px;">
+          <div class="filter-group">
+            <div class="search-input-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="cw-cuts-search" placeholder="Buscar por tema, hook ou transcrição..." oninput="productFilterWorkspaceCuts()">
+            </div>
+            <label>
+              Classificação:
+              <select id="cw-cuts-classification-filter" onchange="productFilterWorkspaceCuts()">
+                <option value="SHORTLIST" selected>🔥 Shortlist (Recomendados + Bons)</option>
+                <option value="RECOMENDADO">RECOMENDADO (Score ≥ 82)</option>
+                <option value="BOM">BOM (Score ≥ 68)</option>
+                <option value="TALVEZ">TALVEZ (Score ≥ 48)</option>
+                <option value="TODOS">Todos os cortes</option>
+              </select>
+            </label>
+            <label>
+              Status:
+              <select id="cw-cuts-status-filter" onchange="productFilterWorkspaceCuts()">
+                <option value="NOVO" selected>NOVO (Aguardando)</option>
+                <option value="APROVADO">APROVADO</option>
+                <option value="DESCARTADO">DESCARTADO</option>
+                <option value="ALL">Todos os status</option>
+              </select>
+            </label>
+          </div>
+          <span class="badge badge-accent"><span id="cw-cuts-filtered-count">0</span> exibidos</span>
+        </div>
+        <div id="cw-cuts-items-container" class="inbox-cards-grid"></div>
+      </div>
+
+      <!-- 5. Perfil de Cortes -->
+      <div id="cw-pane-profile" class="cw-tab-pane" hidden>
+        <div id="cw-profile-container"></div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: CREATOR DNA ==================== -->
+    <section id="view-dna" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Perfil de Cortes & Diretrizes Visuais</h1>
+          <p>Regras de template, decupagem visual e calibração contínua de cortes por criador.</p>
+        </div>
+        <div class="header-actions">
+          <select id="dna-creator-select" onchange="loadDnaView(this.value)">
+            <option value="gabepeixe">GabePeixe (Kick)</option>
+            <option value="brkk">BRKK (YouTube/Kick)</option>
+            <option value="brabox">BRABOX (Twitch)</option>
+            <option value="joaopichau">João Pichau (YouTube)</option>
+            <option value="juninhomanella">Juninho Manella (YouTube)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="dna-detail-container"></div>
+    </section>
+
+    <!-- ==================== VIEW 5: SOURCES / VODS ==================== -->
+    <section id="view-sources" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Lives / VODs</h1>
+          <p>Catálogo centralizado de transmissões monitoradas, na fila ou analisadas por criador.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn-quiet" onclick="loadSourcesView()">↻ Atualizar</button>
+        </div>
+      </div>
+
+      <!-- Filters Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <div class="search-input-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="sources-search-input" placeholder="Buscar por título ou ID...">
+          </div>
+          <label>
+            Criador:
+            <select id="sources-filter-creator">
+              <option value="">Todos os criadores</option>
+              <option value="gabepeixe">GabePeixe</option>
+              <option value="brkk">BRKK</option>
+            </select>
+          </label>
+          <label>
+            Status:
+            <select id="sources-filter-status">
+              <option value="">Todos os status</option>
+              <option value="Analisado">Analisado (Concluída)</option>
+              <option value="Processando">Processando (Em andamento)</option>
+              <option value="Na Fila">Na Fila (Aguardando)</option>
+              <option value="Erro">Erro (Falha)</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <span class="badge badge-neutral"><span id="sources-total-count">0</span> VODs</span>
+        </div>
+      </div>
+
+      <!-- Sources Table -->
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Criador</th>
+              <th>Título da Live</th>
+              <th>Data</th>
+              <th>Duração</th>
+              <th>Plataforma</th>
+              <th>Status</th>
+              <th>Candidatos</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="sources-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 6: CLIP INBOX ==================== -->
+    <section id="view-inbox" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Cortes & Curadoria Editorial</h1>
+          <p>Curadoria humana de momentos: aprove com 1 clique os melhores cortes encontrados pelo minerador.</p>
+        </div>
+        <div class="header-actions">
+          <div style="display:flex; border:1px solid var(--border-medium); border-radius:var(--radius-sm); overflow:hidden;">
+            <button type="button" id="inbox-mode-cards" class="primary" style="border-radius:0; border:none; padding:7px 12px;">Cards</button>
+            <button type="button" id="inbox-mode-table" style="border-radius:0; border:none; padding:7px 12px;">Tabela</button>
+          </div>
+          <button type="button" class="btn-quiet" onclick="loadInboxView()">↻ Atualizar</button>
+        </div>
+      </div>
+
+      <!-- Inbox Filters Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <div class="search-input-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="inbox-search-input" placeholder="Buscar na transcrição, título ou hook...">
+          </div>
+          <label>
+            Classificação:
+            <select id="inbox-filter-classification">
+              <option value="SHORTLIST">🔥 Shortlist (Recomendados + Bons)</option>
+              <option value="RECOMENDADO">RECOMENDADO (Score ≥ 82)</option>
+              <option value="BOM">BOM (Score ≥ 68)</option>
+              <option value="TALVEZ">TALVEZ (Score ≥ 48)</option>
+              <option value="FRACO">FRACO (Score &lt; 48)</option>
+              <option value="TODOS">Todos — incluindo fracos</option>
+            </select>
+          </label>
+          <label>
+            Status:
+            <select id="inbox-filter-status">
+              <option value="NOVO" selected>NOVO (Aguardando)</option>
+              <option value="APROVADO">APROVADO</option>
+              <option value="DESCARTADO">DESCARTADO</option>
+              <option value="ALL">Todos os status</option>
+            </select>
+          </label>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span id="inbox-matches-total" class="badge badge-accent">0 exibidos</span>
+        </div>
+      </div>
+
+      <!-- Inbox Container (Cards or Table) -->
+      <div id="inbox-items-container"></div>
+    </section>
+
+    <!-- ==================== VIEW 7: PUBLISHER (ROADMAP) ==================== -->
+    <section id="view-publisher" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Publisher & Distribuição Multicanal</h1>
+          <p>Agendamento e publicação automática de cortes verticais (planejado para próximas fases).</p>
+        </div>
+        <div><span class="badge badge-warning">Em Planejamento</span></div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+        <div class="card-section">
+          <h3>Agendamento TikTok, Shorts & Reels</h3>
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">
+            Conexão com as APIs oficiais do YouTube, TikTok e Meta para envio direto do arquivo RAW/PREP
+            com título, legenda, hashtags e thumbnail gerada automaticamente.
+          </p>
+          <span class="badge badge-neutral">Roadmap</span>
+        </div>
+
+        <div class="card-section">
+          <h3>Legendas Animadas com Destaque</h3>
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">
+            Geração de legendas em formato karaoke palavra por palavra, cores dinâmicas e quebras de linha automáticas
+            respeitando a zona segura vertical 9:16.
+          </p>
+          <span class="badge badge-neutral">Roadmap</span>
+        </div>
+
+        <div class="card-section">
+          <h3>Regras Específicas por Criador</h3>
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">
+            Aplicação automática das obrigações de campeonato (marcação de perfil oficial, hashtags obrigatórias,
+            inserção de tarja/lower oficial).
+          </p>
+          <span class="badge badge-neutral">Roadmap</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 8: ANALYTICS (ROADMAP) ==================== -->
+    <section id="view-analytics" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Analytics & Retenção Editorial</h1>
+          <p>Métricas de conversão, performance de ganchos (hooks) e retenção nos primeiros 3 segundos.</p>
+        </div>
+        <div><span class="badge badge-warning">Em Planejamento</span></div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+        <div class="card-section">
+          <h3>Taxa de Retenção dos 3 Segundos</h3>
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">
+            Mapeamento da eficácia dos hooks gerados pela IA em comparação com os segundos iniciais do vídeo original.
+          </p>
+        </div>
+
+        <div class="card-section">
+          <h3>Calibração Heurística Contínua</h3>
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">
+            Ajuste fino dos pesos de energia sonora e atividade visual com base nos cortes aprovados e descartados pelo operador.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 9: SYSTEM & DIAGNOSTICS ==================== -->
+    <section id="view-system" class="page-view" hidden>
+      <div class="page-header">
+        <div>
+          <h1>Sistema & Diagnóstico do Ambiente</h1>
+          <p>Verificação de binários de mídia (FFmpeg, FFprobe), aceleração de hardware e integridade do banco.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn-quiet" onclick="loadSystemView()">↻ Atualizar</button>
+        </div>
+      </div>
+
+      <div id="system-diagnostics-container"></div>
+    </section>
+
+    <!-- ==================== LEGACY VIEW 1: WELCOME / IMPORT ==================== -->
+    <section id="welcome" class="page-view" hidden>
+      <div class="eyebrow">DA LIVE AO PRÓXIMO BOM CORTE</div>
+      <h1>Menos procura.<br><span>Mais momentos.</span></h1>
+      <p class="intro">Garimpe suas VODs, revise os melhores sinais e leve o RAW<br>para o seu editor. A decisão criativa continua com você.</p>
+      <div class="workflow"><span>01 &nbsp; IMPORTAR</span><b>→</b><span>02 &nbsp; GARIMPAR</span><b>→</b><span>03 &nbsp; REVISAR</span><b>→</b><span>04 &nbsp; EXTRAIR</span></div>
+
+      <section class="panel import-panel">
+        <div class="section-head">
+          <div>
+            <h2>Comece por uma VOD</h2>
+            <p>YouTube, Kick, Twitch (BRABOX) ou um vídeo salvo no seu computador.</p>
+          </div>
+          <span class="chip">NOVA MINERAÇÃO</span>
+        </div>
+
+        <label>Campanha<select id="campaign"></select></label>
+        <div class="tabs">
+          <button type="button" class="active" data-import="url">↗ Link da VOD</button>
+          <button type="button" data-import="discover">🔍 Descobrir no YouTube</button>
+          <button type="button" data-import="local">▣ Arquivo local</button>
+        </div>
+
+        <form id="url-form">
+          <label>URL da VOD<input id="url" type="url" placeholder="https://www.youtube.com/watch?v=…" required></label>
+          <button type="submit" class="primary">Consultar metadados →</button>
+          <p class="hint">Primeiro conferimos os dados. O download só começa quando você solicitar.</p>
+        </form>
+
+        <form id="discover-form" hidden>
+          <label>Canal, playlist ou vídeo do YouTube<input id="discover-url" placeholder="https://www.youtube.com/@canal, /channel/..., playlist?list=... ou vídeo" required></label>
+          <div class="fields"><label>Limite de vídeos (1 a 100)<input id="discover-limit" type="number" min="1" max="100" value="50"></label></div>
+          <button type="submit" class="primary" id="discover-submit">Descobrir vídeos →</button>
+          <p class="hint">Descoberta leve de metadados. Não baixa mídia nem cadastra VODs automaticamente.</p>
+          <div id="discover-container" hidden>
+            <div id="discover-summary" class="section-head"></div>
+            <div id="discover-items" class="discover-list"></div>
+          </div>
+        </form>
+
+        <form id="local-form" hidden>
+          <label>Vídeo no computador
+            <div class="input-row"><input id="local-path" placeholder="D:\Lives\minha-live.mp4" required><button type="button" id="pick-file">Procurar…</button></div>
+          </label>
+          <div class="fields">
+            <label>Título (opcional)<input id="local-title" placeholder="Nome da live"></label>
+            <label>Data da live (se conhecida)<input id="local-date" type="date"></label>
+          </div>
+          <button type="submit" class="primary">Importar arquivo local →</button>
+          <p class="hint">O original é referenciado sem copiar gigabytes. Mantenha-o no mesmo local.</p>
+        </form>
+
+        <div id="campaign-rules" class="rule-box"></div>
+      </section>
+
+      <div class="bottom-note"><span>✦ Candidatos, não promessas de views.</span><span>RAW preservado • Sem edição criativa automática</span></div>
+    </section>
+
+    <!-- ==================== LEGACY VIEW 2: REMOTE PANEL & BACKLOG ==================== -->
+    <section id="remote-panel" class="page-view" hidden>
+      <h1>Campanhas / Remote</h1>
+      <p>Descubra VODs, revise momentos e baixe somente os cortes aprovados.</p>
+
+      <section class="panel">
+        <label>Campanha operacional<select id="remote-runs"><option value="">Nova campanha operacional</option></select></label>
+
+        <form id="remote-config">
+          <div class="fields">
+            <label>Criador<select id="remote-creator"></select></label>
+            <label>Provider<select id="remote-provider"></select></label>
+            <label>Canal ou playlist YouTube<input id="remote-channel" required placeholder="YouTube: URL com /videos ou /streams; Kick/Twitch: nome"></label>
+            <label>Data inicial<input id="remote-start" type="date" required></label>
+            <label>Data final<input id="remote-end" type="date" required></label>
+          </div>
+          <button type="submit">Salvar campanha/período</button>
+        </form>
+
+        <p class="hint">O período é um filtro de descoberta, não altera o regulamento. Datas usam o dia informado pela fonte. Descoberta automática Kick/Twitch; YouTube por URL manual.</p>
+        <div id="remote-rules" class="rule-box"></div>
+
+        <div class="button-row">
+          <button type="button" id="remote-sync">Sincronizar VODs</button>
+          <button type="button" id="remote-mine" class="primary">Garimpar pendentes / Continuar</button>
+          <button type="button" id="remote-cancel">Cancelar com segurança</button>
+          <label>Modo
+            <select id="remote-mode">
+              <option value="conservador">Conservador</option>
+              <option value="equilibrado" selected>Equilibrado</option>
+              <option value="agressivo">Agressivo</option>
+            </select>
+          </label>
+        </div>
+
+        <details>
+          <summary>Incluir URLs manualmente</summary>
+          <label>Uma URL de VOD por linha<textarea id="remote-urls" rows="3"></textarea></label>
+          <button type="button" id="remote-manual">Adicionar URLs</button>
+        </details>
+      </section>
+
+      <p id="remote-summary" class="metadata"></p>
+      <p id="remote-sync-status" class="hint"></p>
+      <div id="remote-jobs" aria-live="polite"></div>
+
+      <!-- REQUIRED BACKLOG RUNNER PANEL -->
+      <section class="panel" id="backlog-panel">
+        <div class="section-head">
+          <div>
+            <h2>Backlog Runner Contínuo</h2>
+            <p>Ordem: VOD mais recente primeiro • 1 VOD por vez • Fila persistente • Shortlist disponível imediatamente</p>
+          </div>
+          <span class="chip" id="backlog-status-badge">BACKLOG</span>
+        </div>
+        <div class="button-row">
+          <button type="button" id="backlog-refresh">↻ Atualizar VODs</button>
+          <button type="button" id="backlog-start" class="primary">▶ Iniciar Backlog</button>
+          <button type="button" id="backlog-pause">⏸ Pausar</button>
+          <button type="button" id="backlog-resume">↺ Retomar</button>
+        </div>
+        <div id="backlog-summary-grid" class="metadata">
+          <span>Total: <b id="bl-total">0</b></span>
+          <span>Concluídas: <b id="bl-completed">0</b></span>
+          <span>Processando: <b id="bl-processing">0</b></span>
+          <span>Na fila: <b id="bl-pending">0</b></span>
+          <span>Falhou: <b id="bl-failed">0</b></span>
+          <span>Shortlists prontas: <b id="bl-shortlists">0</b></span>
+          <span>Candidatos aguardando: <b id="bl-candidates">0</b></span>
+        </div>
+        <div id="backlog-current-card" style="margin-top:14px;"></div>
+        <details open style="margin-top:14px;">
+          <summary>Fila de VODs (mais recente primeiro) <span id="backlog-queue-count" class="chip">0</span></summary>
+          <div id="backlog-queue-items" style="max-height:360px; overflow-y:auto; margin-top:10px;"></div>
+        </details>
+      </section>
+
+      <details class="panel"><summary>VODs descobertas e pendências</summary><div id="remote-vods"></div></details>
+
+      <section class="panel">
+        <h2>Shortlist editorial</h2>
+        <div class="button-row">
+          <button type="button" id="remote-editorial">Revisar candidatos existentes (cache)</button>
+          <button type="button" id="remote-previews">Preparar previews leves da shortlist</button>
+        </div>
+        <p id="remote-editorial-counts" class="hint"></p>
+        <label>Classificação
+          <select id="remote-filter-editorial">
+            <option value="SHORTLIST">🔥 Recomendados + 🟢 Bons</option>
+            <option>RECOMENDADO</option>
+            <option>BOM</option>
+            <option>TALVEZ</option>
+            <option>FRACO</option>
+            <option value="TODOS">Todos — incluindo fracos</option>
+          </select>
+        </label>
+        <p class="hint">Ranking global, sem quota. VISUAL/TALKING é uma sugestão de layout pela atividade; confira o conteúdo.</p>
+
+        <div class="fields">
+          <label>VOD<select id="remote-filter-vod"><option value="">Todas</option></select></label>
+          <label>Data<input id="remote-filter-date" type="date"></label>
+          <label>Status<select id="remote-filter-status"><option value="">Todos</option><option>NOVO</option><option>APROVADO</option><option>DESCARTADO</option></select></label>
+          <label>Score mínimo<input id="remote-filter-score" type="number" value="0" min="0" max="100"></label>
+          <label>Tipo
+            <select id="remote-filter-type">
+              <option value="">Todos</option><option>GAMEPLAY</option><option>REAÇÃO</option><option>REACT</option><option>COMPETITIVO</option><option>BASTIDOR</option><option>STORYTELLING</option><option>OPINIÃO</option><option>RAGE</option><option>FAIL</option><option>REVEAL</option><option>TALKING</option><option>OUTRO</option><option>VISUAL</option>
+            </select>
+          </label>
+        </div>
+
+        <label>Feedback da revisão (opcional; salvo ao aprovar/descartar)<input id="remote-feedback" maxlength="2000"></label>
+        <div class="button-row">
+          <button type="button" id="remote-select-all">Selecionar visíveis</button>
+          <button type="button" id="remote-select-approved">Selecionar aprovados visíveis</button>
+          <button type="button" id="remote-approve">Aprovar seleção</button>
+          <button type="button" id="remote-discard">Descartar seleção</button>
+          <button type="button" id="remote-download" class="primary">Baixar aprovados</button>
+        </div>
+
+        <div class="fields">
+          <label>Margem antes (s)<input id="remote-pre" type="number" min="0" max="120" value="5"></label>
+          <label>Margem depois (s)<input id="remote-post" type="number" min="0" max="120" value="5"></label>
+          <label class="check"><input id="remote-best" type="checkbox"> Usar melhor qualidade disponível em vez de exigir 1080p60</label>
+        </div>
+
+        <div id="remote-candidates"></div>
+      </section>
+    </section>
+
+    <!-- ==================== LEGACY VIEW 3: SINGLE VOD INSPECTOR ==================== -->
+    <section id="vod-view" class="page-view" hidden>
+      <div class="eyebrow" id="vod-campaign"></div>
+      <h1 class="vod-title" id="vod-title"></h1>
+      <div id="vod-meta" class="metadata"></div>
+      <div id="vod-obligations" class="warning" style="margin-bottom:12px;" hidden></div>
+
+      <details class="panel rules-details"><summary>Elegibilidade e regras da campanha <span id="eligibility" class="chip"></span></summary><div id="vod-rules"></div></details>
+      <div id="vod-warnings" class="warning" hidden></div>
+
+      <section class="panel controls">
+        <div id="download-controls">
+          <label class="check"><input id="reviewed" type="checkbox"> Revisei os avisos de origem, período e campanha.</label>
+          <div class="button-row">
+            <button type="button" id="metadata">Atualizar metadados</button>
+            <button type="button" id="download">Baixar VOD</button>
+            <button type="button" id="attach-local">Vincular arquivo baixado manualmente</button>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <div>
+            <h2>Garimpar momentos</h2>
+            <p>Eventos agrupados, duração contextual e prioridade por conteúdo.</p>
+          </div>
+          <button type="button" class="primary" id="analyze">✦ Analisar VOD</button>
+        </div>
+
+        <div class="fields">
+          <label>Transcrição
+            <select id="transcription">
+              <option value="yes">Áudio + transcrição</option>
+              <option value="no">Somente energia do áudio</option>
+            </select>
+          </label>
+          <label>Modelo
+            <select id="model">
+              <option value="tiny">Tiny · mais rápido</option>
+              <option value="base" selected>Base · equilibrado</option>
+              <option value="small">Small · mais detalhado</option>
+            </select>
+          </label>
+          <label>Processamento
+            <select id="device">
+              <option value="cpu">CPU · compatível</option>
+              <option value="cuda">Tentar GPU NVIDIA</option>
+            </select>
+          </label>
+          <label>Modo de garimpo
+            <select id="mining-mode">
+              <option value="conservador">Conservador · mais seletivo</option>
+              <option value="equilibrado" selected>Equilibrado · recomendado</option>
+              <option value="agressivo">Agressivo · mais exploração</option>
+            </select>
+          </label>
+        </div>
+
+        <p class="hint">No primeiro uso, o modelo é baixado. Reanálises reutilizam etapas prontas. A lista atual é substituída; decisões anteriores ficam no histórico. VODs acima de 30 min usam Fast Scan e análise seletiva com retomada. Qualidade acima de quantidade; nenhuma quota.</p>
+      </section>
+
+      <p id="analysis-metrics" class="hint"></p>
+      <div id="jobs" aria-live="polite"></div>
+
+      <section class="review-section">
+        <div class="section-head">
+          <div>
+            <h2>Momentos encontrados <span id="candidate-count" class="count">0</span></h2>
+            <p>Score de prioridade: uma ordenação heurística para sua revisão.</p>
+          </div>
+          <select id="status-filter" aria-label="Filtrar candidatos">
+            <option value="all">Todos os status</option>
+            <option>NOVO</option>
+            <option>APROVADO</option>
+            <option>DESCARTADO</option>
+          </select>
+        </div>
+
+        <label class="check"><input id="show-history" type="checkbox"> Incluir histórico de análises anteriores (pode conter sobreposições antigas)</label>
+        <div class="review-toolbar">
+          <label class="check"><input type="checkbox" id="select-all"> Selecionar visíveis</label>
+          <button type="button" id="approve-selected">✓ Aprovar</button>
+          <button type="button" id="discard-selected">✕ Descartar</button>
+          <button type="button" id="raw-selected" class="primary">↓ Extrair RAW</button>
+          <button type="button" id="prep-selected">PREP 9:16</button>
+          <div class="roll">
+            <label>Pré-roll <input id="pre" type="number" value="5" min="0" max="120"> s</label>
+            <label>Pós-roll <input id="post" type="number" value="5" min="0" max="120"> s</label>
+          </div>
+        </div>
+
+        <details>
+          <summary>RAW 1080p60 por intervalo (opcional)</summary>
+          <label>URL da VOD original<input id="raw-url" type="url" placeholder="URL original, se o arquivo local for um proxy"></label>
+          <label class="check"><input id="raw-remote" type="checkbox"> Tentar 1080p60 na URL ao extrair RAW. Confirmo que este vídeo começa em 00:00:00 da VOD original, sem trechos removidos.</label>
+          <p class="hint">Na ausência da qualidade/fonte, usa o arquivo local e informa no resultado. any-dl pode variar alguns segundos por keyframes; confira o RAW. Proxies recortados não são aceitos neste modo.</p>
+        </details>
+
+        <label>Classificação editorial
+          <select id="editorial-filter">
+            <option value="SHORTLIST">Recomendados + Bons</option>
+            <option>RECOMENDADO</option>
+            <option>BOM</option>
+            <option>TALVEZ</option>
+            <option>FRACO</option>
+            <option value="TODOS">Todos — incluindo fracos</option>
+          </select>
+        </label>
+        <div id="candidates"></div>
+      </section>
+
+      <details class="panel camera-panel" id="camera-details">
+        <summary>Câmera e composição vertical <span class="chip">PREP 1080 × 1920</span></summary>
+        <p>Selecione a região da câmera. O conteúdo fica embaixo, mantendo a proporção.</p>
+        <div class="button-row">
+          <label>Frame em segundos<input id="frame-time" type="number" value="0" min="0"></label>
+          <button type="button" id="get-frame">Obter frame</button>
+          <label>Selecionar região
+            <select id="region-target">
+              <option value="camera">Câmera</option>
+              <option value="content">Conteúdo principal</option>
+            </select>
+          </label>
+        </div>
+        <canvas id="frame-canvas" hidden></canvas>
+        <p id="frame-hint" class="hint">Gere um frame e arraste sobre a imagem, ou preencha as coordenadas em pixels do vídeo original.</p>
+        <div class="fields region-fields">
+          <fieldset>
+            <legend>Câmera</legend>
+            <label>X<input id="camera-x" type="number" value="0"></label>
+            <label>Y<input id="camera-y" type="number" value="0"></label>
+            <label>Largura<input id="camera-width" type="number" value="320"></label>
+            <label>Altura<input id="camera-height" type="number" value="240"></label>
+          </fieldset>
+          <fieldset>
+            <legend>Conteúdo</legend>
+            <label>X<input id="content-x" type="number" value="0"></label>
+            <label>Y<input id="content-y" type="number" value="0"></label>
+            <label>Largura<input id="content-width" type="number"></label>
+            <label>Altura<input id="content-height" type="number"></label>
+          </fieldset>
+        </div>
+        <div class="fields">
+          <label>Texto obrigatório: X<input id="text-x" type="number" value="35" min="0" max="1000"></label>
+          <label>Texto obrigatório: Y<input id="text-y" type="number" value="680" min="0" max="1860"></label>
+          <button type="button" id="save-regions" class="primary">Salvar composição desta VOD</button>
+        </div>
+        <p class="hint">GabePeixe usa placeholder até você fornecer o lower oficial em config/campaigns/gabepeixe.json. PREP sempre cria outro arquivo; o RAW fica intacto.</p>
+      </details>
+    </section>
+
+  </main>
+</div>
+
+<!-- ==================== MODALS & DIALOGS ==================== -->
+<!-- Preview Player Dialog -->
+<dialog id="preview-dialog">
+  <div class="section-head">
+    <h2>Revisar momento</h2>
+    <button type="button" id="close-preview" onclick="getEl('preview-dialog').close()">Fechar ✕</button>
+  </div>
+  <video id="player" controls autoplay style="width:100%; border-radius:8px;"></video>
+  <p id="preview-caption" style="margin-top:10px; font-size:12px; color:var(--text-muted);"></p>
+</dialog>
+
+<!-- Clip Detail Modal -->
+<dialog id="clip-detail-modal">
+  <div id="clip-detail-body"></div>
+</dialog>
+
+<!-- Editorial Dialog (Legacy metadata packager) -->
+<dialog id="editorial-dialog">
+  <form id="editorial-form">
+    <h2>Pacote editorial</h2>
+    <div id="editorial-obligations" class="warning" style="margin-bottom:12px;" hidden></div>
+    <p class="hint">Campos opcionais; não geram B-roll nem alteram o conteúdo automaticamente.</p>
+    <label>Título / tarja<input id="editorial-title"></label>
+    <label>Título de publicação<input id="editorial-publication_title"></label>
+    <label>Hook<input id="editorial-hook"></label>
+    <div class="fields">
+      <label>Início recomendado (HH:MM:SS)<input id="editorial-recommended_start" required></label>
+      <label>Fim recomendado (HH:MM:SS)<input id="editorial-recommended_end" required></label>
+      <label>Layout
+        <select id="editorial-layout">
+          <option value="">Não definido</option>
+          <option value="VISUAL">VISUAL · conteúdo acima / câmera abaixo</option>
+          <option value="TALKING">TALKING · B-roll acima / câmera abaixo</option>
+        </select>
+      </label>
+    </div>
+    <label>Observação de edição<textarea id="editorial-note" rows="3"></textarea></label>
+    <div class="button-row">
+      <button type="submit" class="primary">Salvar</button>
+      <button type="button" id="editorial-close" onclick="getEl('editorial-dialog').close()">Fechar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Toast Container -->
+<div id="toast" role="status" hidden></div>
+
+</body>
+</html>
