@@ -36,7 +36,7 @@ ROOT = Path(__file__).resolve().parent
 
 def create_app(data=None):
     app = Flask(__name__)
-    app.config.update(JSON_AS_ASCII=False, TRUSTED_HOSTS=["localhost", "127.0.0.1", "[::1]"])
+    app.config.update(JSON_AS_ASCII=False)
     app.json.ensure_ascii = False
     service = Service(ROOT, data)
     app.extensions["miner"] = service
