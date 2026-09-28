@@ -9,11 +9,12 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Install system dependencies (FFmpeg, FFprobe, curl for healthchecks)
+# Install system dependencies (FFmpeg, FFprobe, curl, nodejs for yt-dlp PO Token)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     ca-certificates \
     curl \
+    nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
