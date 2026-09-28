@@ -1,77 +1,78 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import json
+import subprocess
+import tempfile
 import uuid
 import datetime
-import requests
-from urllib.parse import urlparse, parse_qs
-from youtube_transcript_api import YouTubeTranscriptApi
 from google import genai
 from google.genai import types
 from miner.cloud_db import get_firestore_service
 
 def get_subtitles(url):
-    # Extract video id
-    parsed = urlparse(url)
-    video_id = ''
-    if parsed.hostname in ('youtu.be', 'www.youtu.be'):
-        video_id = parsed.path[1:]
-    else:
-        qs = parse_qs(parsed.query)
-        if 'v' in qs:
-            video_id = qs['v'][0]
-    
-    if not video_id:
-        raise Exception("Nao foi possivel identificar o video_id na URL fornecida.")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = [
+            'yt-dlp',
+            '--write-auto-subs',
+            '--write-subs',
+            '--sub-lang', 'pt,en',
+            '--skip-download',
+            '--dump-json',
+            '--extractor-args', 'youtube:player_client=android',
+            '-o', os.path.join(tmpdir, '%(id)s.%(ext)s'),
+            url
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode != 0:
+            raise Exception('yt-dlp failed (android client): ' + res.stderr)
         
-    title = 'Video Sem Titulo'
-    try:
-        r = requests.get(f'https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json', timeout=10)
-        if r.status_code == 200:
-            title = r.json().get('title', title)
-    except Exception as e:
-        print("Aviso: Falha ao obter titulo:", e)
+        info = json.loads(res.stdout.splitlines()[0])
+        video_id = info.get('id')
+        title = info.get('title', '')
         
-    try:
-        api = YouTubeTranscriptApi()
-        transcript_list = api.list(video_id)
+        vtt_file = None
+        for root, dirs, files in os.walk(tmpdir):
+            for f in files:
+                if f.endswith('.vtt'):
+                    vtt_file = os.path.join(root, f)
+                    break
         
-        try:
-            transcript = transcript_list.find_transcript(['pt', 'en', 'es'])
-        except:
-            transcript = list(transcript_list)[0]
+        if not vtt_file:
+            raise Exception('Legendas automǭticas nǜo encontradas para este vdeo.')
             
-        data = transcript.fetch()
+        with open(vtt_file, 'r', encoding='utf-8') as f:
+            vtt_content = f.read()
+            
+        text = re.sub(r'<[^>]+>', '', vtt_content)
+        lines = [line.strip() for line in text.split('\n') if line.strip() and not '-->' in line and not line.strip().isdigit() and line.strip() != 'WEBVTT' and line.strip() != 'Kind: captions' and line.strip() != 'Language: pt' and line.strip() != 'Language: en']
         
         clean_lines = []
-        for item in data:
-            line = item['text'].replace('\n', ' ').strip()
+        for line in lines:
             if not clean_lines or clean_lines[-1] != line:
                 clean_lines.append(line)
                 
         return title, video_id, '\n'.join(clean_lines)
-    except Exception as e:
-        raise Exception(f"Falha ao baixar legendas via API do YouTube: {e}")
 
 def analyze_transcript(transcript_text, api_key):
     client = genai.Client(api_key=api_key)
-    prompt = f"""Voce eh um especialista em curadoria de clipes curtos (TikTok, Reels, Shorts).
-Sua missao eh ler essa transcricao e identificar de 1 a 3 momentos brilhantes que se encaixam no DNA Editorial:
+    prompt = f"""VocǦ Ǹ um especialista em curadoria de clipes curtos (TikTok, Reels, Shorts).
+Sua missǜo Ǹ ler essa transcriǜo e identificar de 1 a 3 momentos brilhantes que se encaixam no DNA Editorial:
 - Premissa (gancho forte inicial)
-- Responsabilidade (o criador assume uma posicao ou da uma opiniao)
+- Responsabilidade (o criador assume uma posiǜo/dǭ uma opiniǜo)
 - Desvantagem (um conflito ou problema relatado)
-- Revelacao (um plot twist, conclusao ou punchline)
+- Revelaǜo (um plot twist, conclusǜo ou punchline)
 
 Retorne EXATAMENTE um array JSON neste formato:
 [
   {{
-    "title": "titulo curto do clipe",
-    "justification": "por que esse clipe eh bom baseado no DNA",
+    "title": "ttulo curto do clipe",
+    "justification": "por que esse clipe Ǹ bom baseado no DNA",
     "quote": "a frase exata que resume o clipe"
   }}
 ]
 
-Transcricao (trecho):
+Transcriǜo (trecho):
 {transcript_text[:20000]}"""
     
     response = client.models.generate_content(
@@ -86,7 +87,7 @@ Transcricao (trecho):
 def leitura_expressa(url, campaign="GabePeixe"):
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
-        raise Exception('GEMINI_API_KEY nao configurada no servidor.')
+        raise Exception('GEMINI_API_KEY nǜo configurada no servidor.')
         
     source_title, vod_id, text = get_subtitles(url)
     
@@ -94,7 +95,7 @@ def leitura_expressa(url, campaign="GabePeixe"):
     try:
         clips_data = json.loads(llm_output)
     except:
-        raise Exception("Gemini nao retornou um JSON valido.")
+        raise Exception("Gemini nǜo retornou um JSON vǭlido.")
         
     db = get_firestore_service()
     
@@ -105,7 +106,7 @@ def leitura_expressa(url, campaign="GabePeixe"):
             "id": clip_id,
             "vod_id": vod_id,
             "campaign": campaign,
-            "title": c.get("title", "Sem titulo"),
+            "title": c.get("title", "Sem ttulo"),
             "hook": c.get("quote", ""),
             "justification": c.get("justification", ""),
             "score": 90,
@@ -114,7 +115,7 @@ def leitura_expressa(url, campaign="GabePeixe"):
             "start_formatted": "00:00:00",
             "end_formatted": "00:01:00",
             "duration_formatted": "1m 00s",
-            "visual_activity": "Media",
+            "visual_activity": "MǸdia",
             "discovered_at": datetime.datetime.utcnow().isoformat(),
             "source_title": source_title
         }
