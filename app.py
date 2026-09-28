@@ -21,6 +21,7 @@ from miner.auth import (
     get_user_store,
     is_auth_required,
     require_role,
+    require_auth,
     verify_radar_secret,
 )
 from miner.cloud_db import get_firestore_service
