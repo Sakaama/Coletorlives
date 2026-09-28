@@ -1,0 +1,4 @@
+l, /channel/..., playlist?list=... ou vídeo" required></label>
+          <div class="fields"><label>Limite de vídeos (1 a 100)<input id="discover-limit" type="number" min="1" max="100" value="50"></label></div>
+          <button type="submit" class="primary" id="discover-submit">Descobrir vídeos →</button>
+          <p class="hint">Descoberta leve de metadados. Não baixa mídia nem cadastra VODs au

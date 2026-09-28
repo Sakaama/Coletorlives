@@ -673,6 +673,10 @@
         <form id="discover-form" hidden>
           <label>Canal, playlist ou vídeo do YouTube<input id="discover-url" placeholder="https://www.youtube.com/@canal, /channel/..., playlist?list=... ou vídeo" required></label>
           <div class="fields"><label>Limite de vídeos (1 a 100)<input id="discover-limit" type="number" min="1" max="100" value="50"></label></div>
+          <div class="fields" style="margin-top: 1rem;">
+            <label>Cookies (Opcional - Cole o conteúdo do cookies.txt para bypass de bloqueio)<textarea id="discoverCookies" rows="3" placeholder="# Netscape HTTP Cookie File..."></textarea></label>
+          </div>
+
           <button type="submit" class="primary" id="discover-submit">Descobrir vídeos →</button>
           <p class="hint">Descoberta leve de metadados. Não baixa mídia nem cadastra VODs automaticamente.</p>
           <div id="discover-container" hidden>
