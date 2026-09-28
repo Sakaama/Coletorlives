@@ -19,8 +19,6 @@ def get_subtitles(url, cookies_txt=""):
             '--sub-lang', 'pt,en',
             '--skip-download',
             '--dump-json',
-            '--extractor-args', 'youtube:player_client=android',
-
             '-o', os.path.join(tmpdir, '%(id)s.%(ext)s'),
             url
         ]
@@ -33,7 +31,7 @@ def get_subtitles(url, cookies_txt=""):
             
         res = subprocess.run(cmd, capture_output=True, text=True)
         if res.returncode != 0:
-            raise Exception('yt-dlp failed (android client): ' + res.stderr)
+            raise Exception('yt-dlp failed: ' + res.stderr)
         
         info = json.loads(res.stdout.splitlines()[0])
         video_id = info.get('id')
