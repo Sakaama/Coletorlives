@@ -14,7 +14,7 @@ def get_subtitles(url, cookies_txt=""):
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = [
             'yt-dlp',
-            '--js-runtime', 'nodejs',
+            '--js-runtime', 'node',
             '--write-auto-subs',
             '--write-subs',
             '--sub-lang', 'pt,en',
