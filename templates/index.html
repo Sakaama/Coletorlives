@@ -1028,5 +1028,21 @@
 <!-- Toast Container -->
 <div id="toast" role="status" hidden></div>
 
+
+<script>
+function doLogin() {
+  const pwd = prompt("Digite a senha de administrador:");
+  if (pwd) {
+    fetch("/api/auth/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({username: "admin", password: pwd})
+    }).then(r => r.json()).then(d => {
+      if(d.ok) window.location.reload();
+      else alert("Senha incorreta!");
+    });
+  }
+}
+</script>
 </body>
 </html>
