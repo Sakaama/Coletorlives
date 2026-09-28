@@ -267,6 +267,7 @@ def create_app(data=None):
         return jsonify(job=collector.enqueue(rid, kind, body))
 
     @app.post("/api/discover")
+    @require_auth
     def discover():
         body = request.get_json() or {}
         campaign = body.get("campaign")
@@ -275,8 +276,12 @@ def create_app(data=None):
         url = body.get("url", "")
         if not url:
             raise ValueError("Informe a URL do canal, playlist ou vídeo do YouTube.")
-        limit = body.get("limit", 50)
-        return jsonify(service.discover(campaign, url, limit))
+        
+        from miner.leitura import leitura_expressa
+        try:
+            return jsonify(leitura_expressa(url, campaign))
+        except Exception as e:
+            raise ValueError(str(e))
 
     @app.post("/api/import/url")
     def import_url():
