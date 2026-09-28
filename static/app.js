@@ -245,7 +245,11 @@ $('discover-form').onsubmit = handle(async e => {
 
   try {
 
-    const res = await api('/api/discover', { campaign, url, limit });
+    
+    const cookiesNode = document.getElementById('discoverCookies');
+    const cookies = cookiesNode ? cookiesNode.value.trim() : "";
+    const res = await api('/api/discover', { campaign, url, limit, cookies });
+
 
     renderDiscoverCatalog(res);
 

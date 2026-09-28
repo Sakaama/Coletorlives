@@ -10,7 +10,7 @@ from google import genai
 from google.genai import types
 from miner.cloud_db import get_firestore_service
 
-def get_subtitles(url):
+def get_subtitles(url, cookies_txt=""): 
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = [
             'yt-dlp',
@@ -20,9 +20,17 @@ def get_subtitles(url):
             '--skip-download',
             '--dump-json',
             '--extractor-args', 'youtube:player_client=android',
+
             '-o', os.path.join(tmpdir, '%(id)s.%(ext)s'),
             url
         ]
+        if cookies_txt:
+            cookie_path = os.path.join(tmpdir, 'cookies.txt')
+            with open(cookie_path, 'w', encoding='utf-8') as cf:
+                cf.write(cookies_txt)
+            cmd.insert(1, '--cookies')
+            cmd.insert(2, cookie_path)
+            
         res = subprocess.run(cmd, capture_output=True, text=True)
         if res.returncode != 0:
             raise Exception('yt-dlp failed (android client): ' + res.stderr)
@@ -84,12 +92,12 @@ Transcriǜo (trecho):
     )
     return response.text
 
-def leitura_expressa(url, campaign="GabePeixe"):
+def leitura_expressa(url, campaign="GabePeixe", cookies_txt=""):
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         raise Exception('GEMINI_API_KEY nǜo configurada no servidor.')
         
-    source_title, vod_id, text = get_subtitles(url)
+    source_title, vod_id, text = get_subtitles(url, cookies_txt)
     
     llm_output = analyze_transcript(text, api_key)
     try:

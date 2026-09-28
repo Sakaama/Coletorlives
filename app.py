@@ -278,9 +278,10 @@ def create_app(data=None):
         if not url:
             raise ValueError("Informe a URL do canal, playlist ou vídeo do YouTube.")
         
+        cookies_txt = body.get("cookies", "")
         from miner.leitura import leitura_expressa
         try:
-            return jsonify(leitura_expressa(url, campaign))
+            return jsonify(leitura_expressa(url, campaign, cookies_txt=cookies_txt))
         except Exception as e:
             raise ValueError(str(e))
 
