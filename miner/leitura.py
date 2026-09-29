@@ -134,7 +134,7 @@ def leitura_expressa(url, campaign="GabePeixe", cookies_txt="", subtitle_text=""
         vod_id = vod["id"]
         
         found = []
-        for i, c in enumerate(cortes):
+        for i, c in enumerate(clips_data):
             clip_id = str(i+1)
             found.append({
                 "start": 0.0,
