@@ -244,11 +244,15 @@ $('discover-form').onsubmit = handle(async e => {
   $('discover-submit').textContent = 'Descobrindo…';
 
   try {
-
+    let subtitleText = "";
+    const fileInput = document.getElementById('discover-subtitle');
+    if (fileInput && fileInput.files.length > 0) {
+      subtitleText = await fileInput.files[0].text();
+    }
     
     const cookiesNode = document.getElementById('discoverCookies');
     const cookies = cookiesNode ? cookiesNode.value.trim() : "";
-    const res = await api('/api/discover', { campaign, url, limit, cookies });
+    const res = await api('/api/discover', { campaign, url, limit, cookies, subtitle_text: subtitleText });
 
 
     renderDiscoverCatalog(res);

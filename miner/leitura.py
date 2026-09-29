@@ -12,7 +12,7 @@ from google.genai import types
 from miner.cloud_db import get_firestore_service
 from youtube_transcript_api import YouTubeTranscriptApi
 
-def get_subtitles(url, cookies_txt=""): 
+def get_subtitles(url, cookies_txt="", subtitle_text=""): 
     # Extract video ID
     match = re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", url)
     video_id = match.group(1) if match else url
@@ -26,6 +26,9 @@ def get_subtitles(url, cookies_txt=""):
             title = metadata.get('title', 'Sem Título')
     except Exception as e:
         print(f"Warning: Could not fetch title via oembed: {e}")
+
+    if subtitle_text:
+        return title, video_id, subtitle_text
 
     # Fetch Transcript
     session = requests.Session()
@@ -98,12 +101,12 @@ Transcrição (trecho):
     )
     return response.text
 
-def leitura_expressa(url, campaign="GabePeixe", cookies_txt=""):
+def leitura_expressa(url, campaign="GabePeixe", cookies_txt="", subtitle_text=""):
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         raise Exception('GEMINI_API_KEY não configurada no servidor.')
         
-    source_title, vod_id, text = get_subtitles(url, cookies_txt)
+    source_title, vod_id, text = get_subtitles(url, cookies_txt, subtitle_text)
     
     llm_output = analyze_transcript(text, api_key)
     try:
