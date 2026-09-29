@@ -80,6 +80,17 @@ def extract_info(root, url, download=False, folder=None, progress=None):
     if diagnostic:
         LOG.warning("yt-dlp: %s", diagnostic)
     if code:
+        if not download and ('youtube.com' in url or 'youtu.be' in url):
+            import urllib.request
+            match = re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", url)
+            if match:
+                video_id = match.group(1)
+                try:
+                    with urllib.request.urlopen(f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json") as response:
+                        metadata = json.loads(response.read())
+                    return {"id": video_id, "title": metadata.get('title', 'Sem Título'), "uploader": metadata.get('author_name', ''), "duration": 0}
+                except Exception:
+                    pass
         raise ValueError(diagnostic or f"yt-dlp terminou com código {code}.")
     if not download and not isinstance(info, dict):
         raise ValueError("yt-dlp não retornou metadados JSON válidos.")

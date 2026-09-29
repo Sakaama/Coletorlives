@@ -122,6 +122,7 @@ def leitura_expressa(url, campaign="GabePeixe", cookies_txt="", subtitle_text=""
         raw_clip = {
             "id": clip_id,
             "vod_id": vod_id,
+            "url": url,
             "campaign": campaign,
             "title": c.get("title", "Sem titulo"),
             "hook": c.get("quote", ""),
