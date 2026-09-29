@@ -11,11 +11,13 @@ from pathlib import Path
 LOG = logging.getLogger(__name__)
 
 
+import sys
+
 def extract_info(root, url, download=False, folder=None, progress=None):
     root = Path(root).resolve()
     python = root / ".venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
     if not python.is_file():
-        raise ValueError("Python do .venv não encontrado. Execute iniciar.bat para preparar o ambiente.")
+        python = sys.executable
     args = [str(python), "-m", "yt_dlp"]
     if download:
         if folder is None:
