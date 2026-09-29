@@ -93,7 +93,7 @@ Transcrição (trecho):
 {transcript_text[:20000]}"""
     
     response = client.models.generate_content(
-        model='gemini-2.5-pro',
+        model='gemini-3.1-pro-preview',
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type='application/json'
