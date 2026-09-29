@@ -253,9 +253,13 @@ $('discover-form').onsubmit = handle(async e => {
     const cookiesNode = document.getElementById('discoverCookies');
     const cookies = cookiesNode ? cookiesNode.value.trim() : "";
     const res = await api('/api/discover', { campaign, url, limit, cookies, subtitle_text: subtitleText });
-
-
-    renderDiscoverCatalog(res);
+    if (res.vod_id) {
+        await refresh();
+        await openVod(res.vod_id);
+        toast("Análise concluída com sucesso!");
+    } else {
+        renderDiscoverCatalog(res);
+    }
 
   } finally {
 

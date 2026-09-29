@@ -282,7 +282,7 @@ def create_app(data=None):
         subtitle_text = body.get("subtitle_text", "")
         from miner.leitura import leitura_expressa
         try:
-            return jsonify(leitura_expressa(url, campaign, cookies_txt=cookies_txt, subtitle_text=subtitle_text))
+            return jsonify(leitura_expressa(url, campaign, cookies_txt=cookies_txt, subtitle_text=subtitle_text, service=service))
         except Exception as e:
             raise ValueError(str(e))
 

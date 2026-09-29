@@ -101,7 +101,7 @@ Transcrição (trecho):
     )
     return response.text
 
-def leitura_expressa(url, campaign="GabePeixe", cookies_txt="", subtitle_text=""):
+def leitura_expressa(url, campaign="GabePeixe", cookies_txt="", subtitle_text="", service=None):
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         raise Exception('GEMINI_API_KEY não configurada no servidor.')
@@ -115,8 +115,41 @@ def leitura_expressa(url, campaign="GabePeixe", cookies_txt="", subtitle_text=""
         raise Exception("Gemini não retornou um JSON válido.")
         
     db = get_firestore_service()
-    
+    if service:
+        import datetime
+        vod, known = service.create_vod(
+            campaign,
+            url,
+            {
+                "url": url,
+                "platform": "YouTube",
+                "title": source_title,
+                "eligibility": {"status": "PERMITIDA", "reasons": []},
+                "date": datetime.datetime.utcnow().date().isoformat(),
+                "duration": 0,
+                "channel": "Desconhecido",
+                "was_live": True,
+            },
+        )
+        vod_id = vod["id"]
+        
+        found = []
+        for i, c in enumerate(cortes):
+            clip_id = str(i+1)
+            found.append({
+                "start": 0.0,
+                "end": 60.0,
+                "score": 90,
+                "title": c.get("title", "Sem titulo"),
+                "quote": c.get("quote", ""),
+                "justification": c.get("justification", ""),
+            })
+            
+        service.save_analysis(vod_id, found, warnings=[], metrics={}, model="gemini-3.1-pro-preview", mode="express", has_segments=False)
+        return {"vod_id": vod_id}
+
     items = []
+
     for c in clips_data:
         clip_id = str(uuid.uuid4())[:8]
         raw_clip = {
